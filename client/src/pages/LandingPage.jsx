@@ -243,8 +243,7 @@ export const LandingPage = () => {
                 { key: 'student', label: 'Student', icon: '🎓', sub: 'Alex Rivera' },
                 { key: 'industry', label: 'Industry', icon: '🏢', sub: 'TechCorp' },
                 { key: 'academician', label: 'Faculty', icon: '🔬', sub: 'Dr. Vance' },
-                { key: 'institution', label: 'Institution', icon: '🏛️', sub: 'MetroTech' },
-                { key: 'admin', label: 'Admin', icon: '🛡️', sub: 'Nexus Admin' }
+                { key: 'institution', label: 'Institution', icon: '🏛️', sub: 'MetroTech' }
               ].map((d) => (
                 <button
                   key={d.key}

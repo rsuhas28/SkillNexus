@@ -26,8 +26,7 @@ export const RegisterPage = () => {
     { label: 'Student', roleKey: 'student', email: 'student@skillnexus.com', icon: '🎓', badge: 'Alex Rivera' },
     { label: 'Industry', roleKey: 'industry', email: 'industry@skillnexus.com', icon: '🏢', badge: 'TechCorp' },
     { label: 'Faculty', roleKey: 'academician', email: 'academician@skillnexus.com', icon: '🔬', badge: 'Dr. Vance' },
-    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', icon: '🏛️', badge: 'MetroTech' },
-    { label: 'Admin', roleKey: 'admin', email: 'admin@skillnexus.com', icon: '🛡️', badge: 'Nexus Admin' }
+    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', icon: '🏛️', badge: 'MetroTech' }
   ];
 
   const handleQuickDemoLogin = (acc) => {

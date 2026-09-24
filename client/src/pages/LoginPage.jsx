@@ -19,8 +19,7 @@ export const LoginPage = () => {
     { label: 'Student', roleKey: 'student', email: 'student@skillnexus.com', pass: 'Student@1234', icon: '🎓', badge: 'Alex Rivera' },
     { label: 'Industry', roleKey: 'industry', email: 'industry@skillnexus.com', pass: 'Industry@1234', icon: '🏢', badge: 'TechCorp' },
     { label: 'Faculty', roleKey: 'academician', email: 'academician@skillnexus.com', pass: 'Faculty@1234', icon: '🔬', badge: 'Dr. Vance' },
-    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', pass: 'Institute@1234', icon: '🏛️', badge: 'MetroTech' },
-    { label: 'Admin', roleKey: 'admin', email: 'admin@skillnexus.com', pass: 'Admin@1234', icon: '🛡️', badge: 'Nexus Admin' }
+    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', pass: 'Institute@1234', icon: '🏛️', badge: 'MetroTech' }
   ];
 
   const handleQuickDemoLogin = async (acc) => {

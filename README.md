@@ -35,7 +35,6 @@ Use the **One-Click Quick Demo Accounts** buttons on the Login page, or sign in 
 | Industry     | Sarah Chen (TechCorp)         | industry@skillnexus.com       | Industry@1234   |
 | Academician  | Dr. Marcus Vance              | academician@skillnexus.com    | Faculty@1234    |
 | Institution  | Dean Robert Sterling          | institution@skillnexus.com    | Institute@1234  |
-| Admin        | Nexus Admin                   | admin@skillnexus.com          | Admin@1234      |
 | Unverified   | Jordan Lee                    | unverified@skillnexus.com     | Unverified@1234 |
 
 > All accounts and full demo datasets are auto-seeded into **server/data/store.json** (local JSON store — no MongoDB setup needed, automatic Atlas fallback).
