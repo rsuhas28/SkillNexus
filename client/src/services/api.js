@@ -23,17 +23,64 @@ function getDemoFallback(endpoint, options) {
     const match = DEMO_ACCOUNTS[email] || DEMO_ACCOUNTS['student@skillnexus.com'];
     localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: match.user, profile: match.profile }));
     localStorage.setItem('skillnexus_token', `demo_token_${match.user.role}`);
-    return {
-      success: true,
-      token: `demo_token_${match.user.role}`,
-      user: match.user,
-      profile: match.profile
-    };
+    return { success: true, token: `demo_token_${match.user.role}`, user: match.user, profile: match.profile };
+  }
+  if (endpoint.startsWith('/auth/register')) {
+    let body = {};
+    try { body = JSON.parse(options.body || '{}'); } catch (e) {}
+    const email = (body.email || '').toLowerCase().trim();
+    const role = body.role || 'student';
+    const name = body.name || 'New User';
+    // Check if it matches a known demo account
+    const knownMatch = DEMO_ACCOUNTS[email];
+    if (knownMatch) {
+      const t = `demo_token_${knownMatch.user.role}`;
+      localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: knownMatch.user, profile: knownMatch.profile }));
+      localStorage.setItem('skillnexus_token', t);
+      return { success: true, token: t, user: knownMatch.user, profile: knownMatch.profile };
+    }
+    // Create a fresh demo user session for any new registrant
+    const newUser = { _id: `usr_new_${Date.now()}`, uid: `usr_new_${Date.now()}`, name, email, role, emailVerified: true, accountStatus: 'active' };
+    const newProfile = role === 'student'
+      ? { headline: 'New Student', institutionName: '', degree: '', graduationYear: '', skills: [], completionPercentage: 0 }
+      : role === 'industry'
+      ? { companyName: name, industrySector: 'Technology', companySize: '1-50', completionPercentage: 0 }
+      : role === 'academician'
+      ? { designation: 'Lecturer', department: 'Computer Science', institutionName: '', completionPercentage: 0 }
+      : { institutionName: name, institutionType: 'University', completionPercentage: 0 };
+    const t = `demo_token_${role}_${Date.now()}`;
+    localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: newUser, profile: newProfile }));
+    localStorage.setItem('skillnexus_token', t);
+    return { success: true, token: t, user: newUser, profile: newProfile };
+  }
+  if (endpoint.startsWith('/auth/firebase')) {
+    // After Firebase OAuth succeeds on the frontend, map to demo session by role hint
+    let body = {};
+    try { body = JSON.parse(options.body || '{}'); } catch (e) {}
+    const email = (body.clientEmail || '').toLowerCase().trim();
+    const role = body.role || 'student';
+    const name = body.clientName || 'Google User';
+    const knownMatch = DEMO_ACCOUNTS[email];
+    if (knownMatch) {
+      const t = `demo_token_${knownMatch.user.role}`;
+      localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: knownMatch.user, profile: knownMatch.profile }));
+      localStorage.setItem('skillnexus_token', t);
+      return { success: true, token: t, user: knownMatch.user, profile: knownMatch.profile };
+    }
+    const newUser = { _id: `usr_oauth_${Date.now()}`, uid: `usr_oauth_${Date.now()}`, name, email, role, emailVerified: true, accountStatus: 'active' };
+    const newProfile = { headline: `${role.charAt(0).toUpperCase() + role.slice(1)} — Just joined SkillNexus`, completionPercentage: 10 };
+    const t = `demo_token_${role}_${Date.now()}`;
+    localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: newUser, profile: newProfile }));
+    localStorage.setItem('skillnexus_token', t);
+    return { success: true, token: t, user: newUser, profile: newProfile };
   }
   if (endpoint.startsWith('/auth/logout')) {
     localStorage.removeItem('skillnexus_token');
     localStorage.removeItem('skillnexus_demo_user');
     return { success: true };
+  }
+  if (endpoint.startsWith('/auth/')) {
+    return { success: true, message: 'OK (demo mode)' };
   }
 
   // 2. Student Profile & Data

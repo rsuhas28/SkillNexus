@@ -70,7 +70,7 @@ export const RegisterPage = () => {
     setLoading(true);
 
     try {
-      await register({
+      const res = await register({
         name: name.trim(),
         email: email.trim(),
         password,
@@ -79,8 +79,12 @@ export const RegisterPage = () => {
         termsAccepted
       });
 
-      // Redirect to email verification page (FR-04)
-      navigate('/verify-email', { state: { email: email.trim(), newlyRegistered: true } });
+      // On static/demo deploy the user comes back already verified — go straight to dashboard
+      if (res?.user?.emailVerified) {
+        navigate(getDashboardRouteForRole(res.user.role));
+      } else {
+        navigate('/verify-email', { state: { email: email.trim(), newlyRegistered: true } });
+      }
     } catch (err) {
       setErrorMessage(err.message || 'Registration failed. Please verify your details.');
     } finally {

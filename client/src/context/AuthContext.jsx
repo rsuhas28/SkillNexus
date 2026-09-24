@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (formData) => {
     const res = await api.register(formData);
-    if (res.success && res.token) {
+    if (res.success && res.token && res.user) {
       localStorage.setItem("skillnexus_token", res.token);
       setToken(res.token); setUser(res.user); setProfile(res.profile || null);
       return res;
