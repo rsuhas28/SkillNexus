@@ -11,17 +11,43 @@ export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { login, loginWithGoogle, loginWithGithub, getDashboardRouteForRole } = useAuth();
+  const { login, loginWithGoogle, loginWithGithub, loginAsDemoRole, getDashboardRouteForRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const demoAccounts = [
-    { label: 'Student', email: 'student@skillnexus.com', pass: 'Student@1234', icon: '🎓', badge: 'Alex Rivera' },
-    { label: 'Industry', email: 'industry@skillnexus.com', pass: 'Industry@1234', icon: '🏢', badge: 'TechCorp' },
-    { label: 'Faculty', email: 'academician@skillnexus.com', pass: 'Faculty@1234', icon: '🔬', badge: 'Dr. Vance' },
-    { label: 'Institution', email: 'institution@skillnexus.com', pass: 'Institute@1234', icon: '🏛️', badge: 'MetroTech' },
-    { label: 'Admin', email: 'admin@skillnexus.com', pass: 'Admin@1234', icon: '🛡️', badge: 'Nexus Admin' }
+    { label: 'Student', roleKey: 'student', email: 'student@skillnexus.com', pass: 'Student@1234', icon: '🎓', badge: 'Alex Rivera' },
+    { label: 'Industry', roleKey: 'industry', email: 'industry@skillnexus.com', pass: 'Industry@1234', icon: '🏢', badge: 'TechCorp' },
+    { label: 'Faculty', roleKey: 'academician', email: 'academician@skillnexus.com', pass: 'Faculty@1234', icon: '🔬', badge: 'Dr. Vance' },
+    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', pass: 'Institute@1234', icon: '🏛️', badge: 'MetroTech' },
+    { label: 'Admin', roleKey: 'admin', email: 'admin@skillnexus.com', pass: 'Admin@1234', icon: '🛡️', badge: 'Nexus Admin' }
   ];
+
+  const handleQuickDemoLogin = async (acc) => {
+    setEmail(acc.email);
+    setPassword(acc.pass);
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      const res = await login(acc.email, acc.pass, true);
+      const user = res.user;
+      const from = location.state?.from?.pathname;
+      if (from && !from.includes('/login')) {
+        navigate(from);
+      } else {
+        navigate(getDashboardRouteForRole(user.role));
+      }
+    } catch (err) {
+      const fallback = loginAsDemoRole(acc.roleKey);
+      if (fallback?.user) {
+        navigate(getDashboardRouteForRole(fallback.user.role));
+      } else {
+        setErrorMessage(err.message || 'Login failed.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fillDemoAccount = (acc) => {
     setEmail(acc.email);
@@ -265,27 +291,29 @@ export const LoginPage = () => {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   <Sparkles size={14} /> Quick Demo Accounts
                 </div>
-                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>1-click autofill</span>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Click any role to sign in instantly</span>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.45rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(115px, 1fr))', gap: '0.45rem' }}>
                 {demoAccounts.map((acc) => {
                   const isSelected = email === acc.email;
                   return (
                     <button
                       key={acc.label}
                       type="button"
-                      onClick={() => fillDemoAccount(acc)}
+                      onClick={() => handleQuickDemoLogin(acc)}
                       id={`btn-demo-${acc.label.toLowerCase()}`}
+                      disabled={loading}
+                      title={`Instant 1-Click Login as ${acc.label}`}
                       style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'flex-start',
-                        gap: '0.1rem',
-                        padding: '0.45rem 0.55rem',
+                        gap: '0.15rem',
+                        padding: '0.5rem 0.6rem',
                         borderRadius: '8px',
                         border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
                         background: isSelected ? 'rgba(99, 102, 241, 0.18)' : 'var(--bg-card)',
-                        cursor: 'pointer',
+                        cursor: loading ? 'not-allowed' : 'pointer',
                         textAlign: 'left',
                         transition: 'all 0.15s ease'
                       }}
@@ -293,7 +321,9 @@ export const LoginPage = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600, fontSize: '0.78rem', color: 'var(--text-primary)' }}>
                         <span>{acc.icon}</span> {acc.label}
                       </div>
-                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{acc.badge}</div>
+                      <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)' }}>
+                        {acc.badge} <span style={{ color: 'var(--primary)', fontWeight: 600 }}>⚡</span>
+                      </div>
                     </button>
                   );
                 })}

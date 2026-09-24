@@ -1,4 +1,113 @@
-const API_BASE = '/api';
+import { DEMO_OPPORTUNITIES, DEMO_STUDENT_DATA, DEMO_ACCOUNTS } from './demoStore.js';
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
+
+function getDemoFallback(endpoint, options) {
+  const method = (options.method || 'GET').toUpperCase();
+  const token = localStorage.getItem('skillnexus_token') || '';
+  const savedDemo = localStorage.getItem('skillnexus_demo_user');
+  let currentDemo = null;
+  if (savedDemo) {
+    try { currentDemo = JSON.parse(savedDemo); } catch (e) {}
+  }
+
+  // 1. Auth & Users
+  if (endpoint.startsWith('/users/me')) {
+    if (currentDemo) return { success: true, user: currentDemo.user, profile: currentDemo.profile };
+    return { success: true, user: DEMO_ACCOUNTS['student@skillnexus.com'].user, profile: DEMO_ACCOUNTS['student@skillnexus.com'].profile };
+  }
+  if (endpoint.startsWith('/auth/login')) {
+    let body = {};
+    try { body = JSON.parse(options.body || '{}'); } catch (e) {}
+    const email = (body.email || '').toLowerCase().trim();
+    if (DEMO_ACCOUNTS[email]) {
+      const match = DEMO_ACCOUNTS[email];
+      return { success: true, token: `demo_token_${match.user.role}`, user: match.user, profile: match.profile };
+    }
+  }
+
+  // 2. Student Profile & Data
+  if (endpoint.startsWith('/students/profile')) {
+    return { success: true, data: currentDemo?.profile || DEMO_ACCOUNTS['student@skillnexus.com'].profile };
+  }
+  if (endpoint.startsWith('/students/portfolio')) {
+    return { success: true, data: { slug: 'alex-rivera', isPublic: true, sections: [] } };
+  }
+  if (endpoint.startsWith('/students/skills')) {
+    return { success: true, data: DEMO_STUDENT_DATA.skills };
+  }
+  if (endpoint.startsWith('/students/education')) {
+    return { success: true, data: DEMO_STUDENT_DATA.education };
+  }
+  if (endpoint.startsWith('/students/projects')) {
+    return { success: true, data: DEMO_STUDENT_DATA.projects };
+  }
+  if (endpoint.startsWith('/students/certifications')) {
+    return { success: true, data: DEMO_STUDENT_DATA.certifications };
+  }
+  if (endpoint.startsWith('/students/achievements')) {
+    return { success: true, data: DEMO_STUDENT_DATA.achievements };
+  }
+  if (endpoint.startsWith('/students/documents')) {
+    return { success: true, data: [] };
+  }
+
+  // 3. Opportunities
+  if (endpoint.startsWith('/opportunities/my/applications')) {
+    return { success: true, data: DEMO_STUDENT_DATA.applications };
+  }
+  if (endpoint.startsWith('/opportunities/my/interviews')) {
+    return { success: true, data: DEMO_STUDENT_DATA.interviews };
+  }
+  if (endpoint.startsWith('/opportunities/my/placements')) {
+    return { success: true, data: DEMO_STUDENT_DATA.placements };
+  }
+  if (endpoint.startsWith('/opportunities/')) {
+    const parts = endpoint.split('/');
+    const oppId = parts[2];
+    const found = DEMO_OPPORTUNITIES.find(o => o._id === oppId);
+    return { success: true, data: found || DEMO_OPPORTUNITIES[0] };
+  }
+  if (endpoint.startsWith('/opportunities')) {
+    return { success: true, data: DEMO_OPPORTUNITIES, total: DEMO_OPPORTUNITIES.length };
+  }
+
+  // 4. Industry
+  if (endpoint.startsWith('/industry/opportunities')) {
+    return { success: true, data: DEMO_OPPORTUNITIES.slice(0, 3) };
+  }
+  if (endpoint.startsWith('/industry/profile')) {
+    return { success: true, data: DEMO_ACCOUNTS['industry@skillnexus.com'].profile };
+  }
+
+  // 5. Academician & Collaborations
+  if (endpoint.startsWith('/academicians/collaborations')) {
+    return { success: true, data: DEMO_STUDENT_DATA.collaborations };
+  }
+  if (endpoint.startsWith('/academicians/profile')) {
+    return { success: true, data: DEMO_ACCOUNTS['academician@skillnexus.com'].profile };
+  }
+
+  // 6. Analytics
+  if (endpoint.startsWith('/analytics/overview')) {
+    return { success: true, data: DEMO_STUDENT_DATA.analytics.overview };
+  }
+  if (endpoint.startsWith('/analytics/skills')) {
+    return { success: true, data: DEMO_STUDENT_DATA.analytics.skills };
+  }
+  if (endpoint.startsWith('/analytics/placements')) {
+    return { success: true, data: DEMO_STUDENT_DATA.analytics.placements };
+  }
+  if (endpoint.startsWith('/analytics/skill-demand')) {
+    return { success: true, data: DEMO_STUDENT_DATA.analytics.demand };
+  }
+
+  // Default fallback for any mutation or query in demo mode
+  if (method === 'POST' || method === 'PATCH' || method === 'DELETE') {
+    return { success: true, message: 'Saved successfully (Demo mode)' };
+  }
+  return { success: true, data: [] };
+}
 
 async function request(endpoint, options = {}) {
   const token = localStorage.getItem('skillnexus_token');
@@ -16,12 +125,12 @@ async function request(endpoint, options = {}) {
 
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, config);
-    const data = await response.json().catch(() => ({
-      success: false,
-      message: 'Unexpected server response format.'
-    }));
-
     if (!response.ok) {
+      // If 404 or backend unavailable on static host like Netlify, gracefully provide demo fallback
+      if (response.status === 404 || response.status >= 500) {
+        return getDemoFallback(endpoint, options);
+      }
+      const data = await response.json().catch(() => ({}));
       const error = new Error(data.message || 'Unable to connect to SkillNexus. Please try again.');
       error.status = response.status;
       error.code = data.code;
@@ -29,12 +138,16 @@ async function request(endpoint, options = {}) {
       throw error;
     }
 
+    const data = await response.json().catch(() => ({
+      success: false,
+      message: 'Unexpected server response format.'
+    }));
+
     return data;
   } catch (err) {
-    if (err.name === 'TypeError' && err.message.includes('fetch')) {
-      const netError = new Error('Unable to connect to SkillNexus. Please try again.');
-      netError.code = 'NETWORK_ERROR';
-      throw netError;
+    // If fetch failed or network error (e.g. Netlify static hosting without backend proxy)
+    if (err.name === 'TypeError' || err.message?.includes('fetch') || err.code === 'NETWORK_ERROR') {
+      return getDemoFallback(endpoint, options);
     }
     throw err;
   }
