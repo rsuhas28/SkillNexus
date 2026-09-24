@@ -2,7 +2,9 @@
  * Cloudinary Service — File Storage
  * Gracefully degrades to metadata-only mode when credentials are absent.
  */
+import 'dotenv/config';
 import { v2 as cloudinary } from 'cloudinary';
+
 import { Readable } from 'stream';
 
 let cloudinaryConfigured = false;

@@ -8,17 +8,23 @@ export const ThemeProvider = ({ children }) => {
     return localStorage.getItem('skillnexus_theme_mode') || 'auto';
   });
 
-  const [activeTheme, setActiveTheme] = useState('dark');
+  const [activeTheme, setActiveTheme] = useState(() => {
+    const saved = localStorage.getItem('skillnexus_theme_mode');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'light';
+  });
 
   useEffect(() => {
     const computeTheme = () => {
-      if (themeMode === 'light') return 'light';
-      if (themeMode === 'dark') return 'dark';
+      if (themeMode === 'light')
+        return 'light';
+      if (themeMode === 'dark')
+        return 'dark';
 
       // Smart automated detection:
       // 1. Check system OS preference
       const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
+
       // 2. Check time of day (6 AM - 6 PM daytime -> light, 6 PM - 6 AM evening/night -> dark)
       const hour = new Date().getHours();
       const isDaytime = hour >= 6 && hour < 18;

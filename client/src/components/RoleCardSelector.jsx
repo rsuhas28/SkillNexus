@@ -5,34 +5,38 @@ export const rolesList = [
   {
     id: 'student',
     title: 'Student',
-    description: 'Build skills, explore internships, and discover premier career opportunities.',
+    description: 'Discover your skills, close your gaps and find opportunities.',
+    cta: 'Select Student',
     icon: GraduationCap,
     accent: '#0284c7',
-    iconBg: 'rgba(2, 132, 199, 0.2)'
+    iconBg: 'rgba(2, 132, 199, 0.14)'
   },
   {
     id: 'industry',
     title: 'Industry',
-    description: 'Connect with verified skilled talent and post high-impact projects & jobs.',
+    description: 'Find candidates with the skills your organization needs.',
+    cta: 'Select Industry',
     icon: Briefcase,
     accent: '#7c3aed',
-    iconBg: 'rgba(124, 58, 237, 0.2)'
+    iconBg: 'rgba(124, 58, 237, 0.14)'
   },
   {
     id: 'academician',
     title: 'Academician',
-    description: 'Connect with industry through research, FDPs, consultancy, and training.',
+    description: 'Connect with industry training, FDPs, research and collaboration.',
+    cta: 'Select Academician',
     icon: BookOpen,
     accent: '#059669',
-    iconBg: 'rgba(5, 150, 105, 0.2)'
+    iconBg: 'rgba(5, 150, 105, 0.14)'
   },
   {
     id: 'institution',
     title: 'Institution',
-    description: 'Manage talent development, placements, faculty, and industry collaboration.',
+    description: 'Monitor skill development, internships and placement outcomes.',
+    cta: 'Select Institution',
     icon: Building2,
     accent: '#d97706',
-    iconBg: 'rgba(217, 119, 6, 0.2)'
+    iconBg: 'rgba(217, 119, 6, 0.14)'
   }
 ];
 

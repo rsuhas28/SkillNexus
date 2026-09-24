@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { RoleCardSelector } from '../components/RoleCardSelector.jsx';
 import { PasswordStrengthMeter } from '../components/PasswordStrengthMeter.jsx';
 import { User, Mail, Lock, Eye, EyeOff, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const RegisterPage = () => {
-  const [role, setRole] = useState('student');
+  const [searchParams] = useSearchParams();
+  const initialRole = searchParams.get('role');
+  const [role, setRole] = useState(initialRole && ['student', 'industry', 'academician', 'institution'].includes(initialRole) ? initialRole : 'student');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -97,10 +99,10 @@ export const RegisterPage = () => {
       <div style={{ maxWidth: '680px', width: '100%' }}>
         <div className="card" id="register-card" style={{ padding: '2.5rem' }}>
           <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <h1 style={{ fontSize: '1.85rem', marginBottom: '0.4rem', color: '#fff' }}>
-              Create Your SkillNexus Account
+            <h1 className="page-heading" style={{ fontSize: '1.85rem', marginBottom: '0.4rem' }}>
+              Create Your SkillNexus AI Account
             </h1>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.925rem' }}>
+            <p className="body-text" style={{ fontSize: '0.925rem' }}>
               Select your role and enter your details to join the ecosystem
             </p>
           </div>
@@ -249,9 +251,9 @@ export const RegisterPage = () => {
 
           {/* Social Auth Divider */}
           <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }}></div>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
             <span style={{ padding: '0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>or register with</span>
-            <div style={{ flex: 1, height: '1px', background: 'rgba(255,255,255,0.08)' }}></div>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
           </div>
 
           {/* Firebase OAuth Buttons */}
@@ -287,7 +289,7 @@ export const RegisterPage = () => {
 
           <div style={{ marginTop: '1.75rem', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
             Already registered?{' '}
-            <Link to="/login" id="link-goto-login" style={{ fontWeight: 600, color: '#818cf8' }}>
+            <Link to="/login" id="link-goto-login" style={{ fontWeight: 600, color: 'var(--primary)' }}>
               Sign In
             </Link>
           </div>

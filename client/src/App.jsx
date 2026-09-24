@@ -9,6 +9,7 @@ import { AIGuideDrawer } from './components/AIGuideDrawer.jsx';
 
 // Public Pages (Phase 1)
 import { LandingPage } from './pages/LandingPage.jsx';
+import { ChooseJourneyPage } from './pages/ChooseJourneyPage.jsx';
 import { LoginPage } from './pages/LoginPage.jsx';
 import { RegisterPage } from './pages/RegisterPage.jsx';
 import { VerifyEmailPage } from './pages/VerifyEmailPage.jsx';
@@ -95,6 +96,7 @@ const AppRoutes = () => {
         <Routes>
           {/* --- Public Routes --- */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/choose-journey" element={<ChooseJourneyPage />} />
           <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
           <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />

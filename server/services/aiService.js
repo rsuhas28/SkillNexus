@@ -1,5 +1,7 @@
+import 'dotenv/config';
 
 // ─── Curated Role-Specific Knowledge Repositories ──────────────────────────
+
 
 function getCuratedInterviewPrep(roleInput = 'Full Stack Developer', skills = []) {
   const r = (roleInput || '').toLowerCase();

@@ -12,8 +12,10 @@ export const ThemeToggle = () => {
   };
 
   const getLabel = () => {
-    if (themeMode === 'auto') return \`Auto (\${activeTheme})\`;
-    if (themeMode === 'light') return 'Light';
+    if (themeMode === 'auto')
+      return `Auto (${activeTheme})`;
+    if (themeMode === 'light')
+      return 'Light';
     return 'Dark';
   };
 

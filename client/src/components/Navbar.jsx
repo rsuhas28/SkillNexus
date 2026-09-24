@@ -22,8 +22,8 @@ export const Navbar = () => {
         <div className="brand-icon">
           <Layers size={20} />
         </div>
-        <span>SkillNexus</span>
-        <span className="brand-tagline-chip">Bridging Skills, Academia & Industry</span>
+        <span>SkillNexus <span style={{ color: 'var(--ai-accent)', fontSize: '0.9em' }}>AI</span></span>
+        <span className="brand-tagline-chip">Bridge Your Skills to Your Future.</span>
       </Link>
 
       <div className="nav-links">
