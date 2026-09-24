@@ -20,10 +20,20 @@ function getDemoFallback(endpoint, options) {
     let body = {};
     try { body = JSON.parse(options.body || '{}'); } catch (e) {}
     const email = (body.email || '').toLowerCase().trim();
-    if (DEMO_ACCOUNTS[email]) {
-      const match = DEMO_ACCOUNTS[email];
-      return { success: true, token: `demo_token_${match.user.role}`, user: match.user, profile: match.profile };
-    }
+    const match = DEMO_ACCOUNTS[email] || DEMO_ACCOUNTS['student@skillnexus.com'];
+    localStorage.setItem('skillnexus_demo_user', JSON.stringify({ user: match.user, profile: match.profile }));
+    localStorage.setItem('skillnexus_token', `demo_token_${match.user.role}`);
+    return {
+      success: true,
+      token: `demo_token_${match.user.role}`,
+      user: match.user,
+      profile: match.profile
+    };
+  }
+  if (endpoint.startsWith('/auth/logout')) {
+    localStorage.removeItem('skillnexus_token');
+    localStorage.removeItem('skillnexus_demo_user');
+    return { success: true };
   }
 
   // 2. Student Profile & Data
@@ -110,6 +120,17 @@ function getDemoFallback(endpoint, options) {
 }
 
 async function request(endpoint, options = {}) {
+  // If deployed to a static host (like Netlify) without an explicit API server URL,
+  // directly serve the rich client-side demo dataset to guarantee zero latency and no HTML errors.
+  const isStaticDeploy = typeof window !== 'undefined' &&
+    !import.meta.env.VITE_API_URL &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1';
+
+  if (isStaticDeploy) {
+    return getDemoFallback(endpoint, options);
+  }
+
   const token = localStorage.getItem('skillnexus_token');
 
   const headers = {
@@ -125,8 +146,14 @@ async function request(endpoint, options = {}) {
 
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, config);
+    const contentType = response.headers.get('content-type') || '';
+
+    // If server returned HTML (e.g. Netlify SPA redirect fallback for /api)
+    if (contentType.includes('text/html')) {
+      return getDemoFallback(endpoint, options);
+    }
+
     if (!response.ok) {
-      // If 404 or backend unavailable on static host like Netlify, gracefully provide demo fallback
       if (response.status === 404 || response.status >= 500) {
         return getDemoFallback(endpoint, options);
       }
@@ -138,14 +165,14 @@ async function request(endpoint, options = {}) {
       throw error;
     }
 
-    const data = await response.json().catch(() => ({
-      success: false,
-      message: 'Unexpected server response format.'
-    }));
+    const data = await response.json().catch(() => null);
+    if (!data) {
+      return getDemoFallback(endpoint, options);
+    }
 
     return data;
   } catch (err) {
-    // If fetch failed or network error (e.g. Netlify static hosting without backend proxy)
+    // If fetch failed or network error (e.g. backend offline or CORS)
     if (err.name === 'TypeError' || err.message?.includes('fetch') || err.code === 'NETWORK_ERROR') {
       return getDemoFallback(endpoint, options);
     }
