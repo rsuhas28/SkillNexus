@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "seed": "node scripts/seedAdmin.js"
+    "seed": "node scripts/seedAdmin.js",
+    "seed:demo": "node scripts/seedDemoData.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

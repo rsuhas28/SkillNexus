@@ -15,6 +15,20 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const demoAccounts = [
+    { label: 'Student', email: 'student@skillnexus.com', pass: 'Student@1234', icon: '🎓', badge: 'Alex Rivera' },
+    { label: 'Industry', email: 'industry@skillnexus.com', pass: 'Industry@1234', icon: '🏢', badge: 'TechCorp' },
+    { label: 'Faculty', email: 'academician@skillnexus.com', pass: 'Faculty@1234', icon: '🔬', badge: 'Dr. Vance' },
+    { label: 'Institution', email: 'institution@skillnexus.com', pass: 'Institute@1234', icon: '🏛️', badge: 'MetroTech' },
+    { label: 'Admin', email: 'admin@skillnexus.com', pass: 'Admin@1234', icon: '🛡️', badge: 'Nexus Admin' }
+  ];
+
+  const fillDemoAccount = (acc) => {
+    setEmail(acc.email);
+    setPassword(acc.pass);
+    setErrorMessage('');
+  };
+
   const handleOAuthSuccess = (user) => {
     const from = location.state?.from?.pathname;
     if (from && !from.includes('/login')) {
@@ -239,8 +253,55 @@ export const LoginPage = () => {
               </button>
             </form>
 
+            {/* Quick Demo Credentials Autofill */}
+            <div style={{
+              marginTop: '1.25rem',
+              padding: '0.85rem',
+              background: 'rgba(99, 102, 241, 0.07)',
+              border: '1px solid rgba(99, 102, 241, 0.22)',
+              borderRadius: '12px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <Sparkles size={14} /> Quick Demo Accounts
+                </div>
+                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>1-click autofill</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.45rem' }}>
+                {demoAccounts.map((acc) => {
+                  const isSelected = email === acc.email;
+                  return (
+                    <button
+                      key={acc.label}
+                      type="button"
+                      onClick={() => fillDemoAccount(acc)}
+                      id={`btn-demo-${acc.label.toLowerCase()}`}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: '0.1rem',
+                        padding: '0.45rem 0.55rem',
+                        borderRadius: '8px',
+                        border: isSelected ? '1px solid var(--primary)' : '1px solid var(--border)',
+                        background: isSelected ? 'rgba(99, 102, 241, 0.18)' : 'var(--bg-card)',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600, fontSize: '0.78rem', color: 'var(--text-primary)' }}>
+                        <span>{acc.icon}</span> {acc.label}
+                      </div>
+                      <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>{acc.badge}</div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Social Auth Divider */}
-            <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', margin: '1.25rem 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
               <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>
               <span style={{ padding: '0 0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>or sign in with</span>
               <div style={{ flex: 1, height: '1px', background: 'var(--border)' }}></div>

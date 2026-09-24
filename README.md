@@ -9,8 +9,10 @@
 npm.cmd --prefix server install
 npm.cmd --prefix client install
 
-# 2. Seed all test accounts
-node server/scripts/seedAdmin.js
+# 2. Seed comprehensive demo data (Users, Opportunities, Projects, Skills, Applications & Analytics)
+node server/scripts/seedDemoData.js
+# Or using npm:
+# npm.cmd run seed:demo
 
 # 3. Start backend (port 5000)
 node server/index.js
@@ -23,18 +25,20 @@ Open **http://localhost:3000**
 
 ---
 
-## 🔑 Test Accounts
+## 🔑 Test Accounts & Demo Credentials
 
-| Role         | Email                         | Password        |
-|--------------|-------------------------------|-----------------|
-| Admin        | admin@skillnexus.com          | Admin@1234      |
-| Student      | student@skillnexus.com        | Student@1234    |
-| Industry     | industry@skillnexus.com       | Industry@1234   |
-| Academician  | academician@skillnexus.com    | Faculty@1234    |
-| Institution  | institution@skillnexus.com    | Institute@1234  |
-| Unverified   | unverified@skillnexus.com     | Unverified@1234 |
+Use the **One-Click Quick Demo Accounts** buttons on the Login page, or sign in manually:
 
-> All accounts are auto-seeded into **server/data/store.json** (local JSON store — no MongoDB needed).
+| Role         | Name / Company                | Email                         | Password        |
+|--------------|-------------------------------|-------------------------------|-----------------|
+| Student      | Alex Rivera                   | student@skillnexus.com        | Student@1234    |
+| Industry     | Sarah Chen (TechCorp)         | industry@skillnexus.com       | Industry@1234   |
+| Academician  | Dr. Marcus Vance              | academician@skillnexus.com    | Faculty@1234    |
+| Institution  | Dean Robert Sterling          | institution@skillnexus.com    | Institute@1234  |
+| Admin        | Nexus Admin                   | admin@skillnexus.com          | Admin@1234      |
+| Unverified   | Jordan Lee                    | unverified@skillnexus.com     | Unverified@1234 |
+
+> All accounts and full demo datasets are auto-seeded into **server/data/store.json** (local JSON store — no MongoDB setup needed, automatic Atlas fallback).
 
 ---
 
