@@ -504,3 +504,135 @@ export const DEMO_STUDENT_DATA = {
     }
   }
 };
+
+export const DEMO_ASSESSMENTS = [
+  {
+    _id: 'asm_react_01',
+    title: 'Modern React & Component Architecture',
+    category: 'Web Development',
+    skillTarget: 'React.js',
+    durationMinutes: 25,
+    difficulty: 'Intermediate',
+    totalQuestions: 15,
+    passingScore: 70,
+    description: 'Assess core React fundamentals, hooks (useEffect, useMemo, custom hooks), performance optimization, and clean state modeling.'
+  },
+  {
+    _id: 'asm_python_ml_01',
+    title: 'Python for AI, Machine Learning & Data Systems',
+    category: 'AI/ML',
+    skillTarget: 'Machine Learning',
+    durationMinutes: 30,
+    difficulty: 'Advanced',
+    totalQuestions: 20,
+    passingScore: 75,
+    description: 'Evaluates Pythonic coding, NumPy vectorization, PyTorch pipeline design, loss functions, and ML validation methodologies.'
+  },
+  {
+    _id: 'asm_cloud_devops_01',
+    title: 'Cloud Infrastructure & Containerization',
+    category: 'DevOps & Cloud',
+    skillTarget: 'Docker & Containers',
+    durationMinutes: 20,
+    difficulty: 'Intermediate',
+    totalQuestions: 12,
+    passingScore: 70,
+    description: 'Multi-stage Docker builds, container networking, microservice health probes, and cloud storage architectures.'
+  }
+];
+
+export const DEMO_ATTEMPTS = [
+  {
+    _id: 'att_101',
+    assessmentId: 'asm_react_01',
+    studentUid: 'usr_student_001',
+    title: 'Modern React & Component Architecture',
+    score: 94,
+    passed: true,
+    completedAt: new Date(Date.now() - 5 * 86400000).toISOString(),
+    breakdown: { stateManagement: 95, hooksLifecycle: 92, performance: 95 }
+  },
+  {
+    _id: 'att_102',
+    assessmentId: 'asm_python_ml_01',
+    studentUid: 'usr_student_001',
+    title: 'Python for AI, Machine Learning & Data Systems',
+    score: 88,
+    passed: true,
+    completedAt: new Date(Date.now() - 12 * 86400000).toISOString(),
+    breakdown: { vectorization: 90, modelTraining: 85, validation: 89 }
+  }
+];
+
+export const DEMO_SKILL_GAP = {
+  targetRole: 'Full Stack AI Engineer',
+  overallFit: 84,
+  matchedSkills: [
+    { name: 'React.js', level: 'Advanced', marketDemand: 'High', strength: 92 },
+    { name: 'Node.js & Express', level: 'Advanced', marketDemand: 'High', strength: 88 },
+    { name: 'Python', level: 'Advanced', marketDemand: 'Very High', strength: 89 },
+    { name: 'Docker & Containers', level: 'Intermediate', marketDemand: 'High', strength: 78 }
+  ],
+  gapSkills: [
+    { name: 'Kubernetes Orchestration', priority: 'High', requiredLevel: 'Intermediate', currentLevel: 'Beginner', delta: -35 },
+    { name: 'Vector Databases (Pinecone/Milvus)', priority: 'Medium', requiredLevel: 'Intermediate', currentLevel: 'None', delta: -50 },
+    { name: 'GraphQL API Design', priority: 'Medium', requiredLevel: 'Intermediate', currentLevel: 'Beginner', delta: -30 }
+  ],
+  learningPathways: [
+    {
+      title: 'Container Orchestration with Kubernetes',
+      duration: '3 Weeks',
+      provider: 'SkillNexus Precision Path',
+      type: 'Hands-on Lab',
+      modules: ['Pod Lifecycle & Deployments', 'Ingress & Services', 'Helm Packaging']
+    },
+    {
+      title: 'Retrieval Augmented Generation & Vector Embeddings',
+      duration: '2 Weeks',
+      provider: 'NexusAI Academy',
+      type: 'Guided Project',
+      modules: ['Dense Vectors vs Sparse', 'HNSW Indexing', 'LangChain Integration']
+    }
+  ]
+};
+
+export const DEMO_MOCK_INTERVIEW = {
+  sessionId: 'mock_sess_2026_01',
+  role: 'Full Stack AI Engineer',
+  currentQuestionIndex: 1,
+  questions: [
+    {
+      id: 'q1',
+      question: 'How do you design a resilient caching strategy between a React client, Express microservices, and a PostgreSQL database under high write traffic?',
+      category: 'System Architecture'
+    },
+    {
+      id: 'q2',
+      question: 'Explain how you would minimize inference latency when deploying a lightweight PyTorch transformer model inside a containerized microservice.',
+      category: 'Applied AI & Optimization'
+    },
+    {
+      id: 'q3',
+      question: 'Walk through an instance where you identified and resolved an asynchronous memory leak or cascading re-render in a complex React tree.',
+      category: 'Frontend Engineering'
+    }
+  ],
+  feedback: {
+    clarityScore: 92,
+    technicalDepth: 88,
+    problemSolving: 90,
+    overallScore: 90,
+    summary: 'Strong structured explanation of Cache-Aside pattern and write-through buffering with Redis. Good consideration of cache invalidation bottlenecks.'
+  }
+};
+
+export const DEMO_ADMIN_USERS = [
+  { _id: 'usr_student_001', name: 'Alex Rivera', email: 'student@skillnexus.com', role: 'student', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-10' },
+  { _id: 'usr_student_002', name: 'Maya Patel', email: 'maya.patel@student.edu', role: 'student', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-15' },
+  { _id: 'usr_industry_001', name: 'Sarah Chen (TechCorp)', email: 'industry@skillnexus.com', role: 'industry', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-05' },
+  { _id: 'usr_industry_002', name: 'NexusAI Labs Talent', email: 'careers@nexusai.example.com', role: 'industry', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-18' },
+  { _id: 'usr_academician_001', name: 'Dr. Marcus Vance', email: 'academician@skillnexus.com', role: 'academician', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-08' },
+  { _id: 'usr_institution_001', name: 'Dean Robert Sterling', email: 'institution@skillnexus.com', role: 'institution', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-02' },
+  { _id: 'usr_admin_001', name: 'Nexus Admin', email: 'admin@skillnexus.com', role: 'admin', accountStatus: 'active', emailVerified: true, createdAt: '2026-01-01' }
+];
+

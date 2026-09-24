@@ -19,8 +19,31 @@ export const RegisterPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const { register, loginWithGoogle, loginWithGithub, getDashboardRouteForRole } = useAuth();
+  const { register, loginWithGoogle, loginWithGithub, loginAsDemoRole, getDashboardRouteForRole } = useAuth();
   const navigate = useNavigate();
+
+  const demoAccounts = [
+    { label: 'Student', roleKey: 'student', email: 'student@skillnexus.com', icon: '🎓', badge: 'Alex Rivera' },
+    { label: 'Industry', roleKey: 'industry', email: 'industry@skillnexus.com', icon: '🏢', badge: 'TechCorp' },
+    { label: 'Faculty', roleKey: 'academician', email: 'academician@skillnexus.com', icon: '🔬', badge: 'Dr. Vance' },
+    { label: 'Institution', roleKey: 'institution', email: 'institution@skillnexus.com', icon: '🏛️', badge: 'MetroTech' },
+    { label: 'Admin', roleKey: 'admin', email: 'admin@skillnexus.com', icon: '🛡️', badge: 'Nexus Admin' }
+  ];
+
+  const handleQuickDemoLogin = (acc) => {
+    setLoading(true);
+    setErrorMessage('');
+    try {
+      const fallback = loginAsDemoRole(acc.roleKey);
+      if (fallback?.user) {
+        navigate(getDashboardRouteForRole(fallback.user.role));
+      }
+    } catch (err) {
+      setErrorMessage(err.message || 'Demo login failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleOAuthRegister = async (provider) => {
     setErrorMessage('');
@@ -252,6 +275,54 @@ export const RegisterPage = () => {
               {!loading && <ArrowRight size={18} />}
             </button>
           </form>
+
+          {/* Quick Demo Credentials Autofill & 1-Click Access */}
+          <div style={{
+            marginTop: '1.25rem',
+            padding: '0.85rem',
+            background: 'rgba(99, 102, 241, 0.07)',
+            border: '1px solid rgba(99, 102, 241, 0.22)',
+            borderRadius: '12px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <CheckCircle2 size={14} /> Quick Demo Accounts
+              </div>
+              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Click any role to enter instantly</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(115px, 1fr))', gap: '0.45rem' }}>
+              {demoAccounts.map((acc) => (
+                <button
+                  key={acc.label}
+                  type="button"
+                  onClick={() => handleQuickDemoLogin(acc)}
+                  id={`btn-reg-demo-${acc.label.toLowerCase()}`}
+                  disabled={loading}
+                  title={`Instant 1-Click Login as ${acc.label}`}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '0.15rem',
+                    padding: '0.5rem 0.6rem',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-card)',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600, fontSize: '0.78rem', color: 'var(--text-primary)' }}>
+                    <span>{acc.icon}</span> {acc.label}
+                  </div>
+                  <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)' }}>
+                    {acc.badge} <span style={{ color: 'var(--primary)', fontWeight: 600 }}>⚡</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Social Auth Divider */}
           <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0 1rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>

@@ -28,8 +28,15 @@ import {
 } from 'lucide-react';
 
 export const LandingPage = () => {
-  const { isAuthenticated, user, getDashboardRouteForRole } = useAuth();
+  const { isAuthenticated, user, getDashboardRouteForRole, loginAsDemoRole } = useAuth();
   const navigate = useNavigate();
+
+  const handleInstantDemo = (roleKey) => {
+    const res = loginAsDemoRole(roleKey);
+    if (res?.user) {
+      navigate(getDashboardRouteForRole(res.user.role));
+    }
+  };
 
   // Active step for interactive pipeline visual
   const [activePipelineStep, setActivePipelineStep] = useState(1);
@@ -215,6 +222,61 @@ export const LandingPage = () => {
                 </Link>
               </>
             )}
+          </div>
+
+          {/* Instant 1-Click Demo Bar */}
+          <div style={{
+            marginTop: '2rem',
+            padding: '1rem',
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(2, 132, 199, 0.08) 100%)',
+            border: '1px solid rgba(99, 102, 241, 0.25)',
+            borderRadius: '14px'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.65rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', fontWeight: 700, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                <Sparkles size={15} style={{ color: '#6366f1' }} /> ⚡ Instant Live Demo (1-Click Access)
+              </div>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>Explore full platform with zero sign-up</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(105px, 1fr))', gap: '0.5rem' }}>
+              {[
+                { key: 'student', label: 'Student', icon: '🎓', sub: 'Alex Rivera' },
+                { key: 'industry', label: 'Industry', icon: '🏢', sub: 'TechCorp' },
+                { key: 'academician', label: 'Faculty', icon: '🔬', sub: 'Dr. Vance' },
+                { key: 'institution', label: 'Institution', icon: '🏛️', sub: 'MetroTech' },
+                { key: 'admin', label: 'Admin', icon: '🛡️', sub: 'Nexus Admin' }
+              ].map((d) => (
+                <button
+                  key={d.key}
+                  type="button"
+                  onClick={() => handleInstantDemo(d.key)}
+                  id={`btn-landing-demo-${d.key}`}
+                  title={`Experience SkillNexus as ${d.label}`}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-start',
+                    gap: '0.15rem',
+                    padding: '0.55rem 0.65rem',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border)',
+                    background: 'var(--bg-card)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--primary)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'var(--border)')}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600, fontSize: '0.8rem', color: 'var(--text-primary)' }}>
+                    <span>{d.icon}</span> {d.label}
+                  </div>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+                    {d.sub} <span style={{ color: 'var(--primary)', fontWeight: 700 }}>⚡</span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Quick Metrics Strip */}

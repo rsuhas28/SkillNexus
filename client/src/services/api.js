@@ -1,4 +1,13 @@
-import { DEMO_OPPORTUNITIES, DEMO_STUDENT_DATA, DEMO_ACCOUNTS } from './demoStore.js';
+import {
+  DEMO_OPPORTUNITIES,
+  DEMO_STUDENT_DATA,
+  DEMO_ACCOUNTS,
+  DEMO_ASSESSMENTS,
+  DEMO_ATTEMPTS,
+  DEMO_SKILL_GAP,
+  DEMO_MOCK_INTERVIEW,
+  DEMO_ADMIN_USERS
+} from './demoStore.js';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
@@ -93,6 +102,9 @@ function getDemoFallback(endpoint, options) {
   if (endpoint.startsWith('/students/skills')) {
     return { success: true, data: DEMO_STUDENT_DATA.skills };
   }
+  if (endpoint.startsWith('/students/skill-profile')) {
+    return { success: true, data: { skills: DEMO_STUDENT_DATA.skills, totalScore: 88 } };
+  }
   if (endpoint.startsWith('/students/education')) {
     return { success: true, data: DEMO_STUDENT_DATA.education };
   }
@@ -138,14 +150,77 @@ function getDemoFallback(endpoint, options) {
   }
 
   // 5. Academician & Collaborations
-  if (endpoint.startsWith('/academicians/collaborations')) {
+  if (endpoint.startsWith('/academicians/collaborations') || endpoint.startsWith('/academicians/my/collaborations')) {
     return { success: true, data: DEMO_STUDENT_DATA.collaborations };
+  }
+  if (endpoint.startsWith('/academicians/opportunities')) {
+    return { success: true, data: DEMO_OPPORTUNITIES.filter(o => o.type === 'fdp' || o.type === 'live_project') };
   }
   if (endpoint.startsWith('/academicians/profile')) {
     return { success: true, data: DEMO_ACCOUNTS['academician@skillnexus.com'].profile };
   }
 
-  // 6. Analytics
+  // 6. Assessments & Skill Gaps
+  if (endpoint.startsWith('/assessments/my/attempts')) {
+    return { success: true, data: DEMO_ATTEMPTS };
+  }
+  if (endpoint.startsWith('/assessments/attempts/')) {
+    return { success: true, data: DEMO_ATTEMPTS[0] };
+  }
+  if (endpoint.startsWith('/assessments/skill-gap')) {
+    return { success: true, data: DEMO_SKILL_GAP };
+  }
+  if (endpoint.startsWith('/assessments/')) {
+    const parts = endpoint.split('/');
+    const asmId = parts[2];
+    const found = DEMO_ASSESSMENTS.find(a => a._id === asmId);
+    return { success: true, data: found || DEMO_ASSESSMENTS[0] };
+  }
+  if (endpoint.startsWith('/assessments')) {
+    return { success: true, data: DEMO_ASSESSMENTS };
+  }
+
+  // 7. AI Services
+  if (endpoint.startsWith('/ai/status')) {
+    return { success: true, aiReady: true, model: 'SkillNexus AI Engine' };
+  }
+  if (endpoint.startsWith('/ai/skill-mapping')) {
+    return { success: true, data: DEMO_SKILL_GAP };
+  }
+  if (endpoint.startsWith('/ai/learning-recommendations')) {
+    return { success: true, data: DEMO_SKILL_GAP.learningPathways };
+  }
+  if (endpoint.startsWith('/ai/career-guidance') || endpoint.startsWith('/ai/guide')) {
+    return { success: true, guidance: 'Based on your advanced React & Python competencies, target roles include Full Stack AI Engineer and Cloud Applications Architect.', suggestions: ['Master Kubernetes orchestration', 'Implement RAG vector indexing'] };
+  }
+  if (endpoint.startsWith('/ai/mock-interview') || endpoint.startsWith('/ai/interview-prep')) {
+    return { success: true, data: DEMO_MOCK_INTERVIEW };
+  }
+  if (endpoint.startsWith('/ai/prep-plan')) {
+    return { success: true, data: DEMO_SKILL_GAP.learningPathways };
+  }
+  if (endpoint.startsWith('/ai/opportunity-matches/')) {
+    return { success: true, matchScore: 88, matchedSkills: ['React.js', 'Python', 'Docker & Containers'], missingSkills: ['Kubernetes'] };
+  }
+  if (endpoint.startsWith('/ai/opportunities/')) {
+    return { success: true, trustScore: 98, verifiedOrg: true, flags: [] };
+  }
+
+  // 8. Admin & Institutional
+  if (endpoint.startsWith('/admin/users')) {
+    return { success: true, users: DEMO_ADMIN_USERS, total: DEMO_ADMIN_USERS.length };
+  }
+  if (endpoint.startsWith('/admin/stats')) {
+    return { success: true, stats: DEMO_STUDENT_DATA.analytics.overview };
+  }
+  if (endpoint.startsWith('/admin/verifications') || endpoint.startsWith('/admin/reported-opportunities')) {
+    return { success: true, data: [] };
+  }
+  if (endpoint.startsWith('/institution/profile')) {
+    return { success: true, data: DEMO_ACCOUNTS['institution@skillnexus.com'].profile };
+  }
+
+  // 9. Analytics
   if (endpoint.startsWith('/analytics/overview')) {
     return { success: true, data: DEMO_STUDENT_DATA.analytics.overview };
   }
@@ -157,6 +232,9 @@ function getDemoFallback(endpoint, options) {
   }
   if (endpoint.startsWith('/analytics/skill-demand')) {
     return { success: true, data: DEMO_STUDENT_DATA.analytics.demand };
+  }
+  if (endpoint.startsWith('/analytics/internships')) {
+    return { success: true, data: DEMO_STUDENT_DATA.analytics.overview };
   }
 
   // Default fallback for any mutation or query in demo mode
